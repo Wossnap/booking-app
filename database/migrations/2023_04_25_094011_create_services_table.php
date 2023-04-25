@@ -16,7 +16,7 @@ return new class extends Migration
             $table->string('name');
             $table->integer('duration');
             $table->integer('breaks');
-            $table->integer('max_bookable_days');
+            $table->integer('bookable_days');
             $table->integer('number_of_clients')->default(1);
             $table->timestamps();
         });
