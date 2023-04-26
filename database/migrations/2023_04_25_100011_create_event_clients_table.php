@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('event_clients', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('event_id')->constrained('events');
             $table->string('first_name');
             $table->string('last_name');
             $table->string('email');
