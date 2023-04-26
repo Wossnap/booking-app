@@ -54,7 +54,7 @@ class BookingService {
     }
 
     // checks if the slot start time is before the current time and if the slot end time is after the working hour end time
-    public function isSlotNotWithinWorkingHour(Service $service, Carbon $date, Carbon $time)
+    public function isSlotNotWithinWorkingHour(Service $service, Carbon $date, Carbon $time): bool
     {
         if($workingHour = $service->workingHours()->where('day',$date->format('l'))->first()){
 
@@ -77,7 +77,7 @@ class BookingService {
         return false;
     }
 
-    public function isSlotBookedOut(Service $service, Carbon $date, Carbon $time)
+    public function isSlotBookedOut(Service $service, Carbon $date, Carbon $time): bool
     {
         if($service->getClientsThatCanBook($date, $time) <= 0){
             return true;
@@ -86,7 +86,7 @@ class BookingService {
         return false;
     }
 
-    public function isSlotNotAvailableForClients(Service $service, Carbon $date, Carbon $time, int $numberOfClients)
+    public function isSlotNotAvailableForClients(Service $service, Carbon $date, Carbon $time, int $numberOfClients): bool
     {
         if($service->getClientsThatCanBook($date, $time) < $numberOfClients){
             return true;
@@ -95,7 +95,7 @@ class BookingService {
         return false;
     }
 
-    public function isSlotNotFittingBookableSlots(Service $service, Carbon $date, Carbon $time)
+    public function isSlotNotFittingBookableSlots(Service $service, Carbon $date, Carbon $time): bool
     {
         if($timeSlots = $this->getBookableScheduleForADay($service, $date)){
             $timeSlots = collect($timeSlots);
@@ -107,7 +107,7 @@ class BookingService {
         }
     }
 
-    public function getBookableScheduleForADay(Service $service, Carbon $date){
+    public function getBookableScheduleForADay(Service $service, Carbon $date): array | null{
         if($workingHour = $service->workingHours()->where('day',$date->format('l'))->first()){
             $timeSlots = array();
 
