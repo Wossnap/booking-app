@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('service_id')->constrained();
             $table->string('day');
+            $table->unique(['service_id', 'day']);
             $table->time('start_time');
             $table->time('end_time');
             $table->timestamps();
