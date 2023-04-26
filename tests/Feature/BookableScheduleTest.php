@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Models\EventClient;
 use App\Models\Service;
 use App\Models\WorkingHour;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -9,20 +10,19 @@ use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Testing\Fluent\AssertableJson;
 use Tests\TestCase;
 use App\Traits\UsesTestDataSeeder;
+use Carbon\Carbon;
 
-class SPADataTest extends TestCase
+class BookableScheduleTest extends TestCase
 {
     use RefreshDatabase, UsesTestDataSeeder;
-    /**
-     * A basic feature test example.
-     */
+
     public function test_spa_gets_all_required_data_to_display_a_calendar_and_time_selection(): void
     {
         $this->withoutExceptionHandling();
 
         $this->addMenHaircutDataForTest();
 
-        $response = $this->get('/api/services');
+        $response = $this->get('/api/bookable-schedules');
 
         $response->assertStatus(200);
 
@@ -35,10 +35,12 @@ class SPADataTest extends TestCase
                     ->has('time_slots.0', fn($json) => $json
                         ->has('start_time')
                         ->has('end_time')
-                        ->has('clients_available_for')
+                        ->has('clients_that_can_book')
                     )
                 )
             )
+            ->has('links')
+            ->has('meta')
         );
     }
 
@@ -60,24 +62,25 @@ class SPADataTest extends TestCase
             'end_time' => '08:15',
         ]);
 
-        // EventClient::factory()->for($event)->create();
-        $event->clients()->create([
-            'first_name' => fake()->firstName(),
-            'last_name' => fake()->lastName(),
-            'email' => fake()->unique()->safeEmail(),
-        ]);
-        $event2->clients()->create([
-            'first_name' => fake()->firstName(),
-            'last_name' => fake()->lastName(),
-            'email' => fake()->unique()->safeEmail(),
-        ]);
-        $event2->clients()->create([
-            'first_name' => fake()->firstName(),
-            'last_name' => fake()->lastName(),
-            'email' => fake()->unique()->safeEmail(),
-        ]);
+        EventClient::factory()->for($event)->create();
+        EventClient::factory(2)->for($event2)->create();
+        // $event->clients()->create([
+        //     'first_name' => fake()->firstName(),
+        //     'last_name' => fake()->lastName(),
+        //     'email' => fake()->unique()->safeEmail(),
+        // ]);
+        // $event2->clients()->create([
+        //     'first_name' => fake()->firstName(),
+        //     'last_name' => fake()->lastName(),
+        //     'email' => fake()->unique()->safeEmail(),
+        // ]);
+        // $event2->clients()->create([
+        //     'first_name' => fake()->firstName(),
+        //     'last_name' => fake()->lastName(),
+        //     'email' => fake()->unique()->safeEmail(),
+        // ]);
 
-        $response = $this->get('/api/services');
+        $response = $this->get('/api/bookable-schedules');
 
         $response->assertStatus(200);
 
@@ -94,15 +97,17 @@ class SPADataTest extends TestCase
                     ->has('time_slots.0', fn($json) => $json//testing to see if there is slots every 10 minutes
                         ->where('start_time', '08:00')
                         ->where('end_time', '08:05')
-                        ->where('clients_available_for', 2)
+                        ->where('clients_that_can_book', 2)
                     )
                     ->has('time_slots.1', fn($json) => $json
                         ->where('start_time', '08:10')
                         ->where('end_time', '08:15')
-                        ->where('clients_available_for', 1)
+                        ->where('clients_that_can_book', 1)
                     )
                 )
             )
+            ->has('links')
+            ->has('meta')
         );
 
         $response->assertDontSee(['date' => now()->addDays(3)->format('Y-m-d')]);
@@ -116,7 +121,7 @@ class SPADataTest extends TestCase
 
         $this->addWomenHairCutDataForTest();
 
-        $response = $this->get('/api/services');
+        $response = $this->get('/api/bookable-schedules');
 
         $response->assertStatus(200);
 
@@ -133,15 +138,17 @@ class SPADataTest extends TestCase
                     ->has('time_slots.0', fn($json) => $json//testing to see if there is slots every 1 hour
                         ->where('start_time', '08:00')
                         ->where('end_time', '08:50')
-                        ->where('clients_available_for', 3)
+                        ->where('clients_that_can_book', 3)
                     )
                     ->has('time_slots.1', fn($json) => $json
                         ->where('start_time', '09:00')
                         ->where('end_time', '09:50')
-                        ->where('clients_available_for', 3)
+                        ->where('clients_that_can_book', 3)
                     )
                 )
             )
+            ->has('links')
+            ->has('meta')
         );
 
         $response->assertDontSee(['date' => now()->addDays(3)->format('Y-m-d')]);

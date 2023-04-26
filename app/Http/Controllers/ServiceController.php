@@ -14,7 +14,7 @@ class ServiceController extends Controller
      */
     public function index()
     {
-        return ServiceResource::collection(Service::all());
+        return ServiceResource::collection(Service::paginate(5));
     }
 
     /**

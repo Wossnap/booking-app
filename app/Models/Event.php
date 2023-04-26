@@ -18,7 +18,7 @@ class Event extends Model
 
     public function clients(): Relation
     {
-        return $this->hasMany(EventClient::class, 'event_id');
+        return $this->hasMany(EventClient::class);
     }
 
 }
