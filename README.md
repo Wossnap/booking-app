@@ -10,7 +10,7 @@ Booking App is an app that helps create different services such as Hair Curt ser
 ### Routes:
 
 - Route GET /api/bookable-schedules Gets list of services with their bookable calendar
-- Route POST /bookings/services/{service id} Gets list of services with their bookable calendar
+- Route POST /bookings/services/{service id} Creates a booking for the specified date, time, and clientss
 
 ### Testing:
 
